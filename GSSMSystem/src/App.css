@@ -1,0 +1,301 @@
+.Display{
+  background-image:url(/hero.jpg);
+  min-height:100vh;
+  width:100%;
+  background-size:cover;
+  background-repeat:no-repeat;
+  background-position:center;
+  position:relative;
+  margin:0;
+  padding:0;
+}
+.Display::after{
+  content:"";
+  inset:0;
+  opacity:0.6;
+  z-index:1;
+  background-color:black;
+  position:absolute;
+
+}
+nav{
+  position:absolute;
+  top:0;
+  left:50%;
+  transform:translateX(-50%);
+  width:96%;
+  display:flex;
+  border:0.2em solid #85AF24;
+  border-radius:0.2em;
+  margin:0.4em 0;
+  padding:0.6em;
+  justify-content:space-around;
+  gap:70%;
+  align-items:center;
+  z-index:2;
+  color:white;
+  font-family:'Roboto Condensed'
+}
+nav button{
+  padding:0.6em 1.8em;
+  background-color:#85AF2A;
+  border:none;
+  color:white;
+  border-radius:0.4em;
+  font-size:1.2em;
+  font-family:'Roboto Condensed'
+}
+nav button:hover{
+  background:white;
+  border:0.2em solid #85AF2A;
+  transition:0.2s all ease-in-out;
+  color:black;
+  font-size:1.1em;
+}
+.Message{
+  top:55%;
+  transform:translateY(-50%);
+  left:0;
+  position:absolute;
+  margin:0 2em;
+  display:flex;
+  flex-direction:column;
+  gap:1.8em;
+  width:40%;
+  z-index:2;
+}
+.Message h1{
+  font-size:3em;
+  color:white;
+  font-family:"Roboto";
+}
+.Message h3{
+  font-size:1.4em;
+  color:white;
+  font-family:"Montserrat";
+  font-weight:400;
+}
+.Message button{
+  width:40%;
+  padding:0.4em;
+  border:none;
+  font-size:1.3em;
+  border:0.2em solid #85AF2A;
+  border-radius:0.4em;
+  font-family:"Roboto Condensed";
+  font-weight:700;
+}
+.Message button:hover{
+  background:#85AF2A;
+  color:white;
+  transition:0.2s all ease-in-out;
+  font-style:italic;
+}
+/*Sign In CSS*/
+.window {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #f5f5f5;
+}
+
+.signs {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4em;
+  width: 90%;
+  max-width: 1200px;
+}
+
+.text-fields {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 50%;
+  gap: 1.2em;
+
+}
+
+.text-fields h1 {
+  font-size: 2.5em;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+  font-family:"Roboto"
+}
+
+.text-fields h3 {
+  font-size: 1em;
+  font-weight: 400;
+  color: #666;
+  margin-bottom: 1em;
+  font-family:"Montserrat"
+}
+
+.text-fields > button {
+  width: 100%;
+  max-width: 430px;
+  padding: 1em;
+  background-color: white;
+  border: 2px solid #7cb342;
+  border-radius: 50px;
+  font-size: 1em;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5em;
+  transition: all 0.3s ease;
+  font-family:"Montserrat"
+}
+
+.text-fields > button:hover {
+  background-color: #f9f9f9;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.text-fields > button::before {
+  content: 'G';
+  font-weight: bold;
+  font-size: 1.2em;
+  background: linear-gradient(to right, #4285f4, #ea4335, #fbbc05, #34a853);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.Option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 430px;
+  gap: 1em;
+  margin: 0.5em 0;
+}
+
+.divider {
+  flex: 1;
+  height: 1px;
+  background-color: #ddd;
+}
+
+.Option p {
+  color: #999;
+  font-size: 0.9em;
+}
+
+.texts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+form {
+  display: flex;
+  gap: 1.2em;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  max-width: 430px;
+}
+
+form input {
+  width: 100%;
+  padding: 1.2em 1.5em;
+  border: 2px solid #7cb342;
+  border-radius: 12px;
+  font-size: 1em;
+  outline: none;
+  transition: all 0.3s ease;
+  font-family:"Open Sans"
+}
+
+form input::placeholder {
+  color: #333;
+  font-weight: 500;
+  font-family:"Open Sans"
+}
+
+form input:focus {
+  border-color: #689f38;
+  box-shadow: 0 0 0 3px rgba(124, 179, 66, 0.1);
+}
+
+form button {
+  width: 100%;
+  padding: 1.2em;
+  background-color: #7cb342;
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family:"Montserrat";
+  font-style:bold;
+}
+
+form button:hover {
+  background-color: #689f38;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(124, 179, 66, 0.3);
+}
+
+.otherwise {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
+  margin-top: 0.5em;
+}
+
+.otherwise p {
+  font-size: 0.95em;
+  color: #666;
+  font-family:"Montserrat"
+}
+
+.otherwise small {
+  font-size: 0.95em;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  text-decoration: underline;
+  font-family:"Roboto Condensed"
+}
+
+.otherwise small:hover {
+  color: #7cb342;
+}
+
+.wallpaper {
+  min-height: 85vh;
+  width: 45%;
+  background: url(wallpaper.jpg) center/cover no-repeat;
+  border-radius: 1.5em;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 968px) {
+  .signs {
+    flex-direction: column;
+    gap: 2em;
+  }
+  
+  .text-fields {
+    width: 100%;
+    align-items: center;
+  }
+  
+  .wallpaper {
+    width: 100%;
+    min-height: 50vh;
+  }
+}
