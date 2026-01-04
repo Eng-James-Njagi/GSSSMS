@@ -13,10 +13,11 @@ export default function Dashboard() {
   const [showExpensesTable, setShowExpensesTable] = useState(false); 
   const [highlightArticle, setHighlightArticle] = useState(false);
   const [showAddPopover, setShowAddPopover] = useState(false);
-
-  // 🔹 NEW: filter state
-  const [selectedMonth, setSelectedMonth] = useState("");
-  const [selectedYear, setSelectedYear] = useState("");
+  const [selectedMonth, setSelectedMonth] = useState("December");
+  const [selectedYear, setSelectedYear] = useState("2024");
+  
+  // Add state for top juice
+  const [topJuice, setTopJuice] = useState({ name: 'Loading...', quantity: 0 });
 
   useEffect(() => {
     if (highlightArticle) {
@@ -24,6 +25,21 @@ export default function Dashboard() {
       return () => clearTimeout(timer);
     }
   }, [highlightArticle]);
+
+  // Fetch top juice when month/year changes
+  useEffect(() => {
+    if (selectedMonth && selectedYear) {
+      fetch(`/api/top-juice?month=${selectedMonth}&year=${selectedYear}`)
+        .then(res => res.json())
+        .then(data => {
+          setTopJuice(data);
+        })
+        .catch(err => {
+          console.error('Failed to fetch top juice:', err);
+          setTopJuice({ name: 'Error', quantity: 0 });
+        });
+    }
+  }, [selectedMonth, selectedYear]);
 
   const handleLogout = async () => {
     try {
@@ -57,15 +73,16 @@ export default function Dashboard() {
       <header>
         <button onClick={handleLogout}>Logout</button>
 
-        {/* 🔹 UPDATED: controlled selects */}
         <div className="month-year-row">
           <select
             name="month"
             className="month-year-select"
             value={selectedMonth}
-            onChange={(e) => setSelectedMonth(e.target.value)}
+            onChange={(e) => {
+              console.log('Month changed to:', e.target.value);
+              setSelectedMonth(e.target.value);
+            }}
           >
-            <option value="">Select Month</option>
             <option value="January">January</option>
             <option value="February">February</option>
             <option value="March">March</option>
@@ -84,9 +101,11 @@ export default function Dashboard() {
             name="year"
             className="month-year-select"
             value={selectedYear}
-            onChange={(e) => setSelectedYear(e.target.value)}
+            onChange={(e) => {
+              console.log('Year changed to:', e.target.value);
+              setSelectedYear(e.target.value);
+            }}
           >
-            <option value="">Select Year</option>
             <option value="2024">2024</option>
             <option value="2025">2025</option>
             <option value="2026">2026</option>
@@ -152,11 +171,17 @@ export default function Dashboard() {
           </section>
         </div>
 
-        <div className="side-panel">
-          <div className="facts">
-            <h3>The most bought Juice</h3>
-          </div>
+      <div className="side-panel">
+        <div className="facts">
+          <h3>The most bought Juice</h3>
+          <p className="juice-name">
+            {topJuice.name}
+          </p>
+          <p className="juice-quantity">
+            Quantity: <span>{topJuice.quantity}</span>
+          </p>
         </div>
+      </div>
       </main>
     </div>
   );

@@ -9,15 +9,23 @@ import {
   ResponsiveContainer
 } from "recharts"
 
-export default function TopJuicesChart() {
+export default function TopJuicesChart({ month, year }) { // ← ADD PROPS HERE
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    // Only fetch if both month and year are provided
+    if (!month || !year) {
+      setData([])
+      setLoading(false)
+      return
+    }
+
     setLoading(true)
     toast.info("Loading top juices data...")
 
-    fetch("/api/top-juices")
+    // ← ADD QUERY PARAMETERS HERE
+    fetch(`/api/top-juices?month=${month}&year=${year}`)
       .then(res => res.json())
       .then(fetchedData => {
         setData(fetchedData)
@@ -28,12 +36,14 @@ export default function TopJuicesChart() {
         toast.error("Failed to load top juices data")
         setLoading(false)
       })
-  }, [])
+  }, [month, year]) // ← ADD DEPENDENCIES HERE
 
   return (
     <div style={{ width: "100%", height: 400 }}>
       {loading ? (
         <p style={{ textAlign: "center", lineHeight: "400px" }}>Loading chart...</p>
+      ) : data.length === 0 ? (
+        <p style={{ textAlign: "center", lineHeight: "400px" }}>No data for selected month and year</p>
       ) : (
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={data} barCategoryGap="5%">

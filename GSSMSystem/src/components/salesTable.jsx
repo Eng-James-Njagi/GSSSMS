@@ -4,31 +4,35 @@ export default function SalesTable({ open, month, year }) {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(false);
 
- useEffect(() => {
+  useEffect(() => {
     if (!open) return;
 
-    
     if (!month || !year) {
       setRows([]);
       return;
     }
 
     setLoading(true);
-    setRows([]); 
+    setRows([]);
 
     fetch(`/api/monthly-sales-products?month=${month}&year=${year}`)
-      .then(res => res.json())
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
-        setRows(data);
+        // Ensure data is an array before setting
+        setRows(Array.isArray(data) ? data : []);
         setLoading(false);
       })
       .catch(err => {
-        console.error(err);
+        console.error('Fetch error:', err);
         setRows([]);
         setLoading(false);
       });
   }, [open, month, year]);
-
 
   if (!open) return null;
 
@@ -42,33 +46,32 @@ export default function SalesTable({ open, month, year }) {
             <th>Total</th>
           </tr>
         </thead>
-       <tbody>
-        {loading ? (
-          <tr className="loadingRow">
-            <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
-              Loading table...
-            </td>
-          </tr>
-        ) : rows.length === 0 ? (
-          <tr className="loadingRow">
-            <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
-              No data for selected month and year
-            </td>
-          </tr>
-        ) : (
-          rows.map(r => (
-            <tr key={r.id}>
-              <td>{r.product}</td>
-              <td>{r.quantity}</td>
-              <td>{r.total}</td>
+        <tbody>
+          {loading ? (
+            <tr className="loadingRow">
+              <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
+                Loading table...
+              </td>
             </tr>
-          ))
-        )}
-      </tbody>
-
+          ) : rows.length === 0 ? (
+            <tr className="loadingRow">
+              <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
+                No data for selected month and year
+              </td>
+            </tr>
+          ) : (
+            rows.map(r => (
+              <tr key={r.id}>
+                <td>{r.product}</td>
+                <td>{r.quantity}</td>
+                <td>{r.total}</td>
+              </tr>
+            ))
+          )}
+        </tbody>
       </table>
 
-      <style jsx>{`
+      <style>{`
         .loadingRow {
           color: #555;
           font-style: italic;

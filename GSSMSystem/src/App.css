@@ -486,18 +486,83 @@ main {
 
 .facts{
   width:350px;
-  height:8em;
-  padding:0.4em 1em;
-  border-radius:0.2em;
-  align-items:flex-start;
-  flex-direction:column;
+  min-height:12em;
+  padding:1.5em 1.5em;
+  border-radius:0.8em;
   display:flex;
-  border:solid 0.3em #7cb342;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
+  background: linear-gradient(135deg, #7cb342 0%, #689f38 100%);
+  box-shadow: 0 8px 24px rgba(124, 179, 66, 0.3);
   margin-top:2em;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+.facts::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.5; }
+  50% { transform: translate(-10%, -10%) scale(1.1); opacity: 0.3; }
+}
+
+.facts:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 32px rgba(124, 179, 66, 0.4);
+}
+
 .facts h3{
   font-family:"Roboto Condensed";
-  font-size:1.4em;
+  font-size:1.2em;
+  color: white;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 0.8em;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  font-weight: 600;
+}
+
+.facts .juice-name {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: white;
+  margin: 0.5rem 0;
+  font-family: "Roboto";
+  text-align: center;
+  position: relative;
+  z-index: 1;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+  line-height: 1.2;
+}
+
+.facts .juice-quantity {
+  font-size: 1.3rem;
+  color: rgba(255, 255, 255, 0.95);
+  font-family: "Montserrat";
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  margin-top: 0.5em;
+}
+
+.facts .juice-quantity span {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: white;
 }
 
 

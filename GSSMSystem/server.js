@@ -75,30 +75,54 @@ app.post('/api/logout', async (req, res) => {
 
 app.get('/api/monthly-sales', async (req, res) => {
   const { data, error } = await supabaseAdmin
-    .from('monthly_sales_summary')
-    .select('date, profit') // Only include what you need
-    .order('date', { ascending: true });
+    .from('monthly_sales_view')  
+    .select('month_date, profit') 
+    .order('month_date', { ascending: true });  
 
   if (error) return res.status(500).json({ error: error.message });
 
   res.json(
     data.map(r => ({
-      date: r.date.split('T')[0],
+      date: r.month_date.split('T')[0], 
       profit: Number(r.profit)
     }))
   );
 });
 
 app.get('/api/top-juices', async (req, res) => {
+  const { month, year } = req.query;
 
-  const { data, error } = await supabaseAdmin
-    .from('Product Table')  // replace with your actual table name
-    .select('prod_Name, QM') 
-    .order('prod_Name', { ascending: true }); 
+  let query = supabaseAdmin
+    .from('Product Table')
+    .select('"prod_Name", "QM"');
 
-  if (error) return res.status(500).json({ error: error.message });
+  // If month and year are provided, filter by them
+  if (month && year) {
+    const monthMap = {
+      'January': 1, 'February': 2, 'March': 3, 'April': 4,
+      'May': 5, 'June': 6, 'July': 7, 'August': 8,
+      'September': 9, 'October': 10, 'November': 11, 'December': 12
+    };
+    
+    const monthNum = monthMap[month];
+    if (monthNum) {
+      const nextMonth = monthNum === 12 ? 1 : monthNum + 1;
+      const nextYear = monthNum === 12 ? parseInt(year) + 1 : year;
+      
+      query = query
+        .gte('transaction_Date', `${year}-${String(monthNum).padStart(2, '0')}-01`)
+        .lt('transaction_Date', `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`);
+    }
+  }
 
-  
+  const { data, error } = await query;
+
+  if (error) {
+    console.error('Top juices error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  // Aggregate quantities by product name
   const aggregated = data.reduce((acc, item) => {
     const existing = acc.find(x => x.prod_Name === item.prod_Name);
     if (existing) {
@@ -109,23 +133,21 @@ app.get('/api/top-juices', async (req, res) => {
     return acc;
   }, []);
 
- 
+  // Sort by totalQM descending
   aggregated.sort((a, b) => b.totalQM - a.totalQM);
 
   res.json(aggregated);
 });
 
-app.get("/api/monthly-sales-products", async (req, res) => {
+app.get('/api/top-juice', async (req, res) => {
   const { month, year } = req.query;
-  
-  // Start building the query
+
   let query = supabaseAdmin
     .from('Product Table')
-    .select('"prod_Id","prod_Name","QM","Amount","Date"');
-  
-  // Apply filters if month and year are provided
+    .select('"prod_Name", "QM"');
+
+  // If month and year are provided, filter by them
   if (month && year) {
-    // Convert month name to number (January = 1, February = 2, etc.)
     const monthMap = {
       'January': 1, 'February': 2, 'March': 3, 'April': 4,
       'May': 5, 'June': 6, 'July': 7, 'August': 8,
@@ -133,39 +155,46 @@ app.get("/api/monthly-sales-products", async (req, res) => {
     };
     
     const monthNum = monthMap[month];
-    
     if (monthNum) {
-      // Filter by year and month
-      const startDate = `${year}-${String(monthNum).padStart(2, '0')}-01`;
-      
-      // Calculate last day of month - FIX: monthNum should be used directly
-      const lastDay = new Date(parseInt(year), monthNum, 0).getDate();
-      const endDate = `${year}-${String(monthNum).padStart(2, '0')}-${String(lastDay).padStart(2, '0')}`;
+      const nextMonth = monthNum === 12 ? 1 : monthNum + 1;
+      const nextYear = monthNum === 12 ? parseInt(year) + 1 : year;
       
       query = query
-        .gte('Date', startDate)
-        .lte('Date', endDate);
+        .gte('transaction_Date', `${year}-${String(monthNum).padStart(2, '0')}-01`)
+        .lt('transaction_Date', `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`);
     }
   }
-  
-  // Apply ordering
-  query = query.order('prod_Name', { ascending: true });
-  
+
   const { data, error } = await query;
-  
+
   if (error) {
+    console.error('Top juice error:', error);
     return res.status(500).json({ error: error.message });
   }
+
+  // Aggregate quantities by product name
+  const juiceTotals = {};
+  data.forEach(item => {
+    const name = item.prod_Name;
+    const qty = item.QM || 0;
+    juiceTotals[name] = (juiceTotals[name] || 0) + qty;
+  });
+
+  // Find the top juice
+  let topJuice = null;
+  let maxQty = 0;
   
-  res.json(
-    data.map(row => ({
-      id: row.prod_Id,
-      product: row.prod_Name,
-      quantity: row.QM,
-      total: row.Amount,
-      date: row.Date
-    }))
-  );
+  for (const [name, qty] of Object.entries(juiceTotals)) {
+    if (qty > maxQty) {
+      maxQty = qty;
+      topJuice = name;
+    }
+  }
+
+  res.json({
+    name: topJuice || 'N/A',
+    quantity: maxQty
+  });
 });
 
 
