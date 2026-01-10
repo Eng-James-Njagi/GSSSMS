@@ -1,4 +1,5 @@
 import { useState, useRef } from "react";
+import {toast} from 'sonner'
 
 export default function AddDataPopover({ open, onClose }) {
   const [selectedTable, setSelectedTable] = useState("");
@@ -67,19 +68,19 @@ export default function AddDataPopover({ open, onClose }) {
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
-    const payload = {
-      table: selectedTable,
-      data: formValues
-    };
-    console.log("Payload to send:", payload);
-    // fetch("/api/add-data", { method: "POST", body: JSON.stringify(payload), headers: {"Content-Type":"application/json"} })
-    //here is where i was to add the api endpoint but supabase requires a subscription
-    onClose();
+  e.preventDefault();
+  const payload = {
+    table: selectedTable,
+    data: formValues
   };
-  const DataForm = () => {
-    toast.success("Data Passed")
-  }
+  console.log("Payload to send:", payload);
+  
+  // Show success toast
+  toast.success("Data Passed");
+  
+  // fetch("/api/add-data", { method: "POST", body: JSON.stringify(payload), headers: {"Content-Type":"application/json"} })
+  onClose();
+};
 
   return (
     <div className="popoverWrapper">
@@ -124,7 +125,6 @@ export default function AddDataPopover({ open, onClose }) {
             ))}
             <button 
             type="submit" 
-            onClick={DataForm}
             className="submitBtn">Add</button>
           </form>
         )}

@@ -41,30 +41,38 @@ export default function SalesTable({ open, month, year }) {
       <table>
         <thead>
           <tr>
+            <th>ID</th>
             <th>Product</th>
+            <th>Category</th>
             <th>Quantity</th>
-            <th>Total</th>
+            <th>Unit</th>
+            <th>Amount</th>
+            <th>Payment Type</th>
           </tr>
         </thead>
         <tbody>
           {loading ? (
             <tr className="loadingRow">
-              <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
+              <td colSpan={7} style={{ textAlign: "center", padding: "1rem" }}>
                 Loading table...
               </td>
             </tr>
           ) : rows.length === 0 ? (
             <tr className="loadingRow">
-              <td colSpan={3} style={{ textAlign: "center", padding: "1rem" }}>
+              <td colSpan={7} style={{ textAlign: "center", padding: "1rem" }}>
                 No data for selected month and year
               </td>
             </tr>
           ) : (
             rows.map(r => (
               <tr key={r.id}>
+                <td>{r.id}</td>
                 <td>{r.product}</td>
+                <td>{r.category}</td>
                 <td>{r.quantity}</td>
+                <td>{r.unit}</td>
                 <td>{r.total}</td>
+                <td>{r.paymentType}</td>
               </tr>
             ))
           )}

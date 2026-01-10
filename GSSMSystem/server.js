@@ -198,6 +198,7 @@ app.get('/api/top-juice', async (req, res) => {
 });
 
 
+
 app.get("/api/stocks-table",async (req, res) => {
   const { data, error } = await supabaseAdmin
     .from('Stocks Table') 
@@ -236,6 +237,60 @@ app.get("/api/expenses-table",  async (req, res) => {
       amount: row.amount,
       date: row.expense_date,
       type: row.expense_type
+    }))
+  );
+});
+
+
+
+app.get('/api/monthly-sales-products', async (req, res) => {
+  const { month, year } = req.query;
+
+ 
+  if (!month || !year) {
+    return res.status(400).json({ error: 'Month and year are required' });
+  }
+
+
+  const monthMap = {
+    'January': 1, 'February': 2, 'March': 3, 'April': 4,
+    'May': 5, 'June': 6, 'July': 7, 'August': 8,
+    'September': 9, 'October': 10, 'November': 11, 'December': 12
+  };
+
+  const monthNum = monthMap[month];
+  
+  if (!monthNum) {
+    return res.status(400).json({ error: 'Invalid month name' });
+  }
+
+
+  const nextMonth = monthNum === 12 ? 1 : monthNum + 1;
+  const nextYear = monthNum === 12 ? parseInt(year) + 1 : year;
+
+
+  const { data, error } = await supabaseAdmin
+    .from('Product Table')
+    .select('"prod_Id", "prod_Name", category, "QM", "UM", "Amount", "PT"')
+    .gte('transaction_Date', `${year}-${String(monthNum).padStart(2, '0')}-01`)
+    .lt('transaction_Date', `${nextYear}-${String(nextMonth).padStart(2, '0')}-01`)
+    .order('prod_Id', { ascending: true });
+
+  if (error) {
+    console.error('Monthly sales products error:', error);
+    return res.status(500).json({ error: error.message });
+  }
+
+  
+  res.json(
+    data.map(row => ({
+      id: row.prod_Id,
+      product: row.prod_Name,
+      category: row.category,
+      quantity: row.QM,
+      unit: row.UM,
+      total: row.Amount,
+      paymentType: row.PT
     }))
   );
 });
